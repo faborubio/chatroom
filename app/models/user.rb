@@ -3,4 +3,9 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  scope :all_except, ->(user) { where.not(id: user) }
+  # cuando se crea un nuevo user se actualizan los users automaticamente
+  after_create_commit { broadcast_append_to "users" }
+  has_many :messages
 end
